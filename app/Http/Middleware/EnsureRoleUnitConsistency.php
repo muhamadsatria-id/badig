@@ -11,7 +11,7 @@ class EnsureRoleUnitConsistency
     /**
      * Reject accounts whose persisted role/unit pairing violates the five-role model.
      *
-     * @param  \Closure(\Illuminate\Http\Request): \Symfony\Component\HttpFoundation\Response  $next
+     * @param  Closure(Request): Response  $next
      */
     public function handle(Request $request, Closure $next): Response
     {

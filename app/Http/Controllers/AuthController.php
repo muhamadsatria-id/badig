@@ -17,6 +17,7 @@ use Illuminate\View\View;
 class AuthController extends Controller
 {
     private const DUMMY_PASSWORD_HASH = '$2y$12$YVsgBym2lwx3lX2wK91osuCOGhpzIu10fnaLeJGT3zFrAR7wRJcim';
+
     public function home(): RedirectResponse
     {
         return auth()->check()

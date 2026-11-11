@@ -24,6 +24,7 @@ return new class extends Migration
                     foreach ($users as $user) {
                         $this->quarantineEmail((int) $user->id, 'empty');
                     }
+
                     continue;
                 }
 

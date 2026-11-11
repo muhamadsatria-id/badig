@@ -4,14 +4,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     private function common(Blueprint $table): void
     {
         $table->foreignId('district_id')->nullable()->constrained()->nullOnDelete();
         $table->foreignId('village_id')->nullable()->constrained()->nullOnDelete();
         $table->decimal('koordinat_lat', 11, 8)->nullable();
         $table->decimal('koordinat_lng', 11, 8)->nullable();
-        $table->enum('status_laporan', ['draft','submitted','approved','rejected'])->default('draft');
+        $table->enum('status_laporan', ['draft', 'submitted', 'approved', 'rejected'])->default('draft');
         $table->text('catatan_validasi')->nullable();
         $table->foreignId('operator_id')->nullable()->constrained('users')->nullOnDelete();
         $table->timestamps();

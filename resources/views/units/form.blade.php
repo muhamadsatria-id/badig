@@ -56,10 +56,7 @@
     </div>
 
     @if($errors->any())
-        <div class="mt-6 flex items-center gap-2 rounded-2xl border border-danger/20 bg-[var(--danger-soft)] px-4 py-3 text-sm font-medium text-danger shadow-sm">
-            <span class="material-symbols-outlined text-base text-danger">error</span>
-            {{ $errors->first() }}
-        </div>
+        <x-ui.alert variant="error" class="mt-6 shadow-sm">{{ $errors->first() }}</x-ui.alert>
     @endif
 
     <form method="POST" action="{{ $action }}" enctype="multipart/form-data" class="mt-6 space-y-6">

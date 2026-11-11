@@ -10,9 +10,10 @@
         body {
             font-family: Arial, Helvetica, sans-serif;
             color: #000000;
+            background-color: #ffffff;
             font-size: 10pt;
             line-height: 1.25;
-            position: relative; /* Penting untuk penempatan watermark */
+            position: relative;
         }
         
         /* --- WATERMARK SETTINGS --- */
@@ -21,10 +22,10 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 350px; /* Atur ukuran lebar logo watermark di sini */
+            width: 350px;
             height: auto;
-            opacity: 0.12; /* Tingkat transparansi (0.1 = sangat samar, 0.2 = jelas) */
-            z-index: -1000; /* Memastikan watermark berada di belakang teks dan tabel */
+            opacity: 0.12;
+            z-index: -1000;
             text-align: center;
         }
         .watermark img {
@@ -42,10 +43,6 @@
         }
         .kop-surat .underline {
             text-decoration: underline;
-        }
-        .pro-justitia {
-            margin-top: 3px;
-            font-weight: bold;
         }
 
         /* --- JUDUL DPO / DATA ORANG --- */
@@ -74,7 +71,7 @@
             width: 100%;
             border-collapse: collapse;
             border: 1px solid #000000;
-            background-color: transparent; /* Memastikan background transparan */
+            background-color: transparent;
         }
         .top-box td {
             border: 1px solid #000000;
@@ -159,38 +156,79 @@
             text-decoration: underline;
         }
 
-        /* --- LAMPIRAN (PAGE BREAK) --- */
+        /* --- LAMPIRAN (PAGE BREAK & GRID FIX) --- */
         .attachment-section {
             page-break-before: always;
+            break-before: page;
             margin-top: 20px;
         }
-        .image-grid {
+        .attachment-title {
+            font-weight: bold;
+            font-size: 11pt;
+            text-align: center;
+            text-decoration: underline;
+            margin-bottom: 15px;
+        }
+        .sub-heading {
+            font-size: 9.5pt;
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        
+        /* Grid Tabel dengan Lebar Tetap */
+        .grid-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 8px;
+            table-layout: fixed;
+            margin-top: 6px;
         }
-        .image-grid td {
+        .grid-table td {
             width: 50%;
+            padding: 6px;
+            vertical-align: top;
+            box-sizing: border-box;
+        }
+        .attachment-box {
+            border: 1px solid #000000;
             padding: 8px;
             text-align: center;
-            vertical-align: top;
+            background-color: transparent;
+            page-break-inside: avoid;
+            break-inside: avoid;
+            box-sizing: border-box;
+            width: 100%;
         }
-        .attachment-thumb {
-            border: 1px solid #000000;
-            max-width: 100%;
+        
+        /* Pembungkus Link & Gambar yang Ketat */
+        .img-link {
+            display: block;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
         }
-        .attachment-caption {
-            margin-top: 6px;
-            font-size: 8pt;
-            word-wrap: break-word;
+        .img-responsive {
+            max-width: 100% !important;
+            height: auto !important;
+            display: block;
+            margin: 0 auto 8px auto;
         }
-        .attachment-actions {
-            margin-top: 4px;
-            font-size: 8pt;
-        }
-        .attachment-actions a {
+        
+        .doc-link {
             color: #0000ee;
             text-decoration: underline;
+            font-size: 8.5pt;
+        }
+        
+        /* LIST BERKAS DOKUMEN POLOS */
+        .doc-list {
+            font-size: 9pt;
+            padding-left: 20px;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+        .doc-list li {
+            margin-bottom: 4px;
         }
     </style>
 </head>
@@ -351,24 +389,28 @@
         </tr>
     </table>
 
+    <!-- SEKSI B: LAMPIRAN DOKUMEN PENDUKUNG -->
     @if($attachmentImages->isNotEmpty() || $documentAttachments->isNotEmpty())
         <div class="attachment-section">
-            <div style="font-weight: bold; text-decoration: underline; margin-bottom: 10px;">LAMPIRAN DOKUMENTASI & BERKAS PENDUKUNG</div>
+            <div class="attachment-title">LAMPIRAN DOKUMENTASI &amp; BERKAS PENDUKUNG</div>
             
+            <!-- LAMPIRAN FOTO / GAMBAR VISUAL -->
             @if($attachmentImages->isNotEmpty())
-                <table class="image-grid">
+                <div class="sub-heading">DOKUMENTASI FOTO / GAMBAR VISUAL</div>
+                <table class="grid-table">
                     @foreach($attachmentImages->chunk(2) as $chunk)
                         <tr>
                             @foreach($chunk as $row)
                                 <td>
-                                    <a href="{{ route('database-orang.attachments.preview', [$orang, $row['file']->id]) }}">
-                                        <img src="{{ $row['data_uri'] }}" alt="Lampiran" class="attachment-thumb" @if(($row['width'] ?? 0) > 0) width="{{ $row['width'] }}" height="{{ $row['height'] }}" @endif>
-                                    </a>
-                                    <div class="attachment-caption">{{ $row['file']->original_name }}</div>
-                                    <div class="attachment-actions">
-                                        <a href="{{ route('database-orang.attachments.preview', [$orang, $row['file']->id]) }}">Lihat</a>
-                                        &nbsp;&nbsp;|&nbsp;&nbsp;
-                                        <a href="{{ route('database-orang.attachments.download', [$orang, $row['file']->id]) }}">Unduh</a>
+                                    <div class="attachment-box">
+                                        <a href="{{ route('database-orang.attachments.preview', [$orang, $row['file']->id]) }}" target="_blank" class="img-link">
+                                            <img src="{{ $row['data_uri'] }}" alt="Gambar Lampiran" class="img-responsive" width="100%">
+                                        </a>
+                                        <div style="margin-top: 4px; font-size: 8pt; text-align: center;">
+                                            <a href="{{ route('database-orang.attachments.preview', [$orang, $row['file']->id]) }}" class="doc-link" target="_blank">Lihat</a>
+                                            &nbsp;&nbsp;|&nbsp;&nbsp;
+                                            <a href="{{ route('database-orang.attachments.download', [$orang, $row['file']->id]) }}" class="doc-link">Unduh</a>
+                                        </div>
                                     </div>
                                 </td>
                             @endforeach
@@ -380,13 +422,13 @@
                 </table>
             @endif
 
+            <!-- LAMPIRAN BERKAS DOKUMEN (POLOS) -->
             @if($documentAttachments->isNotEmpty())
-                <div style="margin-top: 15px; font-weight: bold; font-size: 9pt;">Daftar Berkas Lampiran:</div>
-                <ul style="font-size: 9pt; padding-left: 20px; margin-top: 5px;">
+                <div class="sub-heading">BERKAS DOKUMEN PENDUKUNG (PDF / WORD / EXCEL / DLL)</div>
+                <ul class="doc-list">
                     @foreach($documentAttachments as $file)
                         <li>
-                            <a href="{{ route('database-orang.attachments.download', [$orang, $file->id]) }}" style="color: #0000ee; text-decoration: underline;">{{ $file->original_name }}</a>
-                            ({{ strtoupper($file->extension) }} - {{ $file->human_file_size }}) &mdash; klik untuk lihat/unduh
+                            <a href="{{ route('database-orang.attachments.download', [$orang, $file->id]) }}" class="doc-link" target="_blank">{{ $file->original_name }}</a>
                         </li>
                     @endforeach
                 </ul>

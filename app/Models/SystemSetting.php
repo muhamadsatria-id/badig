@@ -8,9 +8,8 @@ class SystemSetting extends Model
 {
     protected $fillable = [
         'key',
-        'value'
+        'value',
     ];
-
 
     public static function getValue($key)
     {

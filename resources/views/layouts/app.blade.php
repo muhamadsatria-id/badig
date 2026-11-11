@@ -105,39 +105,24 @@
         <x-layout.topbar :page-title="$pageTitle" />
 
         <section class="px-4 pb-10 pt-24 sm:px-6 lg:px-8">
-            <div class="mx-auto max-w-[1500px] space-y-5">
+            <div id="badig-content" class="mx-auto max-w-[1500px] space-y-5">
                 @if(session('success'))
-                    <div class="rounded-xl border border-accent/20 bg-[var(--accent-soft)] px-4 py-3 text-sm font-medium text-accent-strong dark:text-accent">
-                        <div class="flex items-start gap-2.5">
-                            <flux:icon name="check-circle" class="mt-0.5 size-4 shrink-0" />
-                            <span>{{ session('success') }}</span>
-                        </div>
-                    </div>
+                    <x-ui.alert variant="success">{{ session('success') }}</x-ui.alert>
                 @endif
 
                 @if(session('error'))
-                    <div class="rounded-xl border border-danger/20 bg-[var(--danger-soft)] px-4 py-3 text-sm font-medium text-danger">
-                        <div class="flex items-start gap-2.5">
-                            <flux:icon name="exclamation-triangle" class="mt-0.5 size-4 shrink-0" />
-                            <span>{{ session('error') }}</span>
-                        </div>
-                    </div>
+                    <x-ui.alert variant="error">{{ session('error') }}</x-ui.alert>
                 @endif
 
                 @if($errors->any())
-                    <div class="rounded-xl border border-danger/20 bg-[var(--danger-soft)] px-4 py-3 text-sm text-danger">
-                        <div class="flex items-start gap-2.5">
-                            <flux:icon name="exclamation-triangle" class="mt-0.5 size-4 shrink-0" />
-                            <div>
-                                <div class="font-semibold">Validasi gagal</div>
-                                <ul class="mt-2 list-disc space-y-1 pl-5">
-                                    @foreach($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                    <x-ui.alert variant="error">
+                        <div class="font-semibold">Validasi gagal</div>
+                        <ul class="mt-2 list-disc space-y-1 pl-5">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </x-ui.alert>
                 @endif
 
                 @yield('content')

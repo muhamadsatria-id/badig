@@ -90,6 +90,7 @@ class StaticMapService
   <text x="380" y="272" text-anchor="middle" font-family="Arial" font-size="12" fill="#475569">{$lat}, {$lng}</text>
 </svg>
 SVG;
+
         return 'data:image/svg+xml;base64,'.base64_encode($svg);
     }
 }

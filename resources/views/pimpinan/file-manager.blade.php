@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <form method="GET" action="{{ route('pimpinan.file-manager') }}" class="grid grid-cols-1 gap-3 rounded-2xl border border-line bg-surface p-4 shadow-sm sm:grid-cols-2 md:grid-cols-6 md:items-end badig-card">
+    <form method="GET" action="{{ route('pimpinan.file-manager') }}" data-live-target="#badig-results" class="grid grid-cols-1 gap-3 rounded-2xl border border-line bg-surface p-4 shadow-sm sm:grid-cols-2 md:grid-cols-6 md:items-end badig-card">
         <div class="space-y-2 md:col-span-2">
             <label for="q" class="block text-[11px] font-semibold uppercase tracking-[0.24em] text-muted">Cari Berkas</label>
             <input id="q" type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Nama file, ekstensi, ID arsip..." class="h-11 w-full rounded-xl border border-line bg-surface-raised px-3 text-sm text-muted outline-none transition placeholder:text-faint focus:border-accent focus:bg-surface badig-field">
@@ -58,6 +58,7 @@
             <p class="text-sm text-muted">Klik master berkas untuk membuka daftar sub-berkas beserta aksi lihat, unduh, dan hapus.</p>
         </div>
 
+        <div id="badig-results" data-live-region>
         <div class="space-y-3 p-4">
             @forelse($groups as $group)
                 @php $isUnit = in_array($group->unit, ['unit1', 'unit2', 'unit3', 'unit4'], true); @endphp
@@ -66,14 +67,9 @@
                         <button type="button" @click="open = !open" class="badig-focus flex min-w-0 flex-1 items-center gap-3 rounded-lg px-1 py-1 text-left" :aria-expanded="open ? 'true' : 'false'">
                             <span class="material-symbols-outlined shrink-0 text-xl text-muted">folder</span>
                             <span class="min-w-0">
-                                <span class="flex flex-wrap items-center gap-2">
-                                    <span class="rounded-full border border-line bg-surface px-2.5 py-1 text-[11px] font-semibold text-muted badig-badge">
-                                        {{ $units[$group->unit] ?? strtoupper($group->unit) }}
-                                    </span>
-                                    <span class="font-mono text-[11px] font-semibold text-faint">#{{ $group->record_id }}</span>
-                                    <span class="rounded-full border border-line bg-surface px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted">{{ $group->files_count }} sub-berkas</span>
+                                <span class="block truncate text-sm font-semibold text-ink">
+                                    {{ $group->title !== '' ? $group->title : 'Arsip tanpa judul' }}@if(($group->category ?? '') !== '')<span class="font-normal text-muted"> - {{ $group->category }}</span>@endif@if(($units[$group->unit] ?? '') !== '')<span class="font-normal text-muted"> {{ $units[$group->unit] }}</span>@endif
                                 </span>
-                                <span class="mt-1.5 block truncate text-sm font-semibold text-ink">{{ $group->title !== '' ? $group->title : 'Arsip #' . $group->record_id }}</span>
                                 <span class="mt-0.5 block text-[11px] text-muted">Unggahan terakhir {{ $group->latest_at?->format('d/m/Y H:i') ?? '-' }}</span>
                             </span>
                             <span class="material-symbols-outlined ml-auto shrink-0 text-base text-muted transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
@@ -121,7 +117,7 @@
                                             </a>
                                         @endif
                                         <a href="{{ route('pimpinan.file-manager.attachments.download', $file->id) }}" class="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-surface-raised">
-                                            <span class="material-symbols-outlined text-base text-accent">download</span>
+                                            <span class="material-symbols-outlined text-base">download</span>
                                             Unduh
                                         </a>
                                         <form action="{{ route('pimpinan.file-manager.attachments.delete', $file->id) }}" method="POST" data-confirm="Apakah Anda yakin ingin menghapus file ini?">
@@ -147,6 +143,7 @@
 
         <div class="border-t border-line bg-surface-raised p-4">
             {{ $groups->links() }}
+        </div>
         </div>
     </div>
 </div>

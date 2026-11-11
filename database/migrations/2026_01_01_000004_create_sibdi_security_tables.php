@@ -5,7 +5,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('audit_logs', function (Blueprint $table) {
@@ -30,7 +31,7 @@ return new class extends Migration {
         try {
             DB::unprepared("CREATE TRIGGER trg_audit_logs_no_update BEFORE UPDATE ON audit_logs FOR EACH ROW BEGIN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Audit logs cannot be updated'; END");
             DB::unprepared("CREATE TRIGGER trg_audit_logs_no_delete BEFORE DELETE ON audit_logs FOR EACH ROW BEGIN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Audit logs cannot be deleted'; END");
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             report($e);
         }
     }
@@ -40,7 +41,7 @@ return new class extends Migration {
         try {
             DB::unprepared('DROP TRIGGER IF EXISTS trg_audit_logs_no_update');
             DB::unprepared('DROP TRIGGER IF EXISTS trg_audit_logs_no_delete');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             report($e);
         }
         Schema::dropIfExists('system_backups');

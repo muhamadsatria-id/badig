@@ -8,28 +8,25 @@ use Illuminate\Support\Facades\Request;
 
 class AuditService
 {
-
     public static function log(
         $action,
         $module,
-        $description=null
-    )
-    {
+        $description = null
+    ) {
 
         AuditLog::create([
 
-            'user_id'=>Auth::id(),
+            'user_id' => Auth::id(),
 
-            'action'=>$action,
+            'action' => $action,
 
-            'module'=>$module,
+            'module' => $module,
 
-            'ip_address'=>Request::ip(),
+            'ip_address' => Request::ip(),
 
-            'description'=>$description
+            'description' => $description,
 
         ]);
 
     }
-
 }

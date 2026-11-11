@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToUnit;
-
 use Illuminate\Database\Eloquent\Model;
 
 class DatabaseOrang extends Model

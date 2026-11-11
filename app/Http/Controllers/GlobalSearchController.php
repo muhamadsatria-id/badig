@@ -9,12 +9,10 @@ use Illuminate\Http\Request;
 
 class GlobalSearchController extends Controller
 {
-
     public function search(Request $request)
     {
 
         $keyword = $request->keyword;
-
 
         $archives = Archive::where(
             'judul',
@@ -22,20 +20,17 @@ class GlobalSearchController extends Controller
             "%$keyword%"
         )->get();
 
-
         $files = ArchiveFile::where(
             'nama_file',
             'like',
             "%$keyword%"
         )->get();
 
-
         $people = DatabaseOrang::where(
             'nama',
             'like',
             "%$keyword%"
         )->get();
-
 
         return view(
             'search.result',
@@ -47,5 +42,4 @@ class GlobalSearchController extends Controller
         );
 
     }
-
 }

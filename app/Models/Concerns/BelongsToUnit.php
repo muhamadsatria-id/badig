@@ -2,6 +2,7 @@
 
 namespace App\Models\Concerns;
 
+use App\Models\Unit;
 use Illuminate\Database\Eloquent\Builder;
 
 trait BelongsToUnit
@@ -44,6 +45,6 @@ trait BelongsToUnit
 
     public function unit()
     {
-        return $this->belongsTo(\App\Models\Unit::class);
+        return $this->belongsTo(Unit::class);
     }
 }

@@ -73,21 +73,11 @@
                     </div>
 
                     @if(session('otp_notice'))
-                        <div class="mt-6 rounded-xl border border-warning/20 bg-[var(--warning-soft)] px-4 py-3 text-sm text-warning">
-                            <div class="flex gap-2.5">
-                                <flux:icon name="exclamation-triangle" class="mt-0.5 size-4 shrink-0" />
-                                <span>{{ session('otp_notice') }}</span>
-                            </div>
-                        </div>
+                        <x-ui.alert variant="warning" class="mt-6">{{ session('otp_notice') }}</x-ui.alert>
                     @endif
 
                     @if($errors->any())
-                        <div class="mt-6 rounded-xl border border-danger/20 bg-[var(--danger-soft)] px-4 py-3 text-sm text-danger">
-                            <div class="flex gap-2.5">
-                                <flux:icon name="x-circle" class="mt-0.5 size-4 shrink-0" />
-                                <span>{{ $errors->first() }}</span>
-                            </div>
-                        </div>
+                        <x-ui.alert variant="error" class="mt-6">{{ $errors->first() }}</x-ui.alert>
                     @endif
 
                     <form method="POST" action="{{ route('login.process') }}" class="mt-7 space-y-5">

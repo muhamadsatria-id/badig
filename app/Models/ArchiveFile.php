@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Concerns\BelongsToUnit;
+use Illuminate\Database\Eloquent\Model;
 
 class ArchiveFile extends Model
 {
@@ -14,13 +14,11 @@ class ArchiveFile extends Model
         'nama_file',
         'path_file',
         'extension',
-        'size'
+        'size',
     ];
 
     public function unit()
     {
         return $this->belongsTo(Unit::class);
     }
-
 }
-

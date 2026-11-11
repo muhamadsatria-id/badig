@@ -30,7 +30,7 @@
     </div>
 
     <div class="mt-6 rounded-2xl border border-line bg-surface p-5 shadow-sm sm:p-6 badig-card">
-        <form method="GET" action="{{ route('units.file-manager', $unit) }}" class="min-w-0 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5 lg:items-end">
+        <form method="GET" action="{{ route('units.file-manager', $unit) }}" data-live-target="#badig-results" class="min-w-0 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5 lg:items-end">
             <div class="lg:col-span-2">
                 <label class="block text-[11px] font-semibold uppercase tracking-[0.24em] text-muted">
                     Cari Nama Berkas
@@ -77,6 +77,7 @@
             </div>
         </div>
 
+        <div id="badig-results" data-live-region>
         <div class="mt-4 space-y-3">
             @forelse($groups as $group)
                 <div x-data="{ open: false }" class="overflow-hidden rounded-2xl border border-line bg-surface-raised badig-card">
@@ -87,11 +88,7 @@
                             <button type="button" @click="open = !open" class="badig-focus flex min-w-0 flex-1 items-center gap-3 rounded-lg px-1 py-1 text-left" :aria-expanded="open ? 'true' : 'false'">
                                 <span class="material-symbols-outlined shrink-0 text-xl text-muted">folder</span>
                                 <span class="min-w-0">
-                                    <span class="flex flex-wrap items-center gap-2">
-                                        <span class="font-mono text-[11px] font-semibold text-faint">#{{ $group->record_id }}</span>
-                                        <span class="rounded-full border border-line bg-surface px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted">{{ $group->files_count }} sub-berkas</span>
-                                    </span>
-                                    <span class="mt-1 block truncate text-sm font-semibold text-ink">{{ $group->title !== '' ? $group->title : 'Arsip #' . $group->record_id }}</span>
+                                    <span class="block truncate text-sm font-semibold text-ink">{{ $group->title !== '' ? $group->title : 'Arsip tanpa judul' }}</span>
                                     <span class="mt-0.5 block text-[11px] text-muted">Unggahan terakhir {{ $group->latest_at?->format('d/m/Y H:i') ?? '-' }}</span>
                                 </span>
                                 <span class="material-symbols-outlined ml-auto shrink-0 text-base text-muted transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
@@ -129,7 +126,7 @@
                                             </a>
                                         @endif
                                         <a href="{{ route('units.attachments.download', [$unit, $file->id]) }}" class="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-surface-raised">
-                                            <span class="material-symbols-outlined text-base text-accent">download</span>
+                                            <span class="material-symbols-outlined text-base">download</span>
                                             Unduh
                                         </a>
                                         <form action="{{ route('units.attachments.delete', [$unit, $file->id]) }}" method="POST" data-confirm="Apakah Anda yakin ingin menghapus file ini?">
@@ -156,19 +153,7 @@
         <div class="mt-4 flex justify-end">
             {{ $groups->links() }}
         </div>
+        </div>
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script @cspNonce>
-document.addEventListener('DOMContentLoaded', () => {
-    const all = document.getElementById('selectAllRows');
-    const rows = document.querySelectorAll('.rowCheckbox');
-
-    all?.addEventListener('change', () => rows.forEach((checkbox) => {
-        checkbox.checked = all.checked;
-    }));
-});
-</script>
-@endpush

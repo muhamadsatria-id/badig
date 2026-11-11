@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Storage;
 
 class SecureDownloadController extends Controller
 {
-
     public function download($id)
     {
         $file = ArchiveFile::findOrFail($id);
@@ -18,5 +17,4 @@ class SecureDownloadController extends Controller
                 $file->nama_file
             );
     }
-
 }

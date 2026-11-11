@@ -22,10 +22,10 @@ class PimpinanFileManagerController extends Controller
     private const ALLOWED_TYPES = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv', 'txt', 'ppt', 'pptx'];
 
     private array $units = [
-        'unit1' => 'Unit 1',
-        'unit2' => 'Unit 2',
-        'unit3' => 'Unit 3',
-        'unit4' => 'Unit 4',
+        'unit1' => 'Ideologi Politik',
+        'unit2' => 'Ekonomi',
+        'unit3' => 'Sosial Budaya',
+        'unit4' => 'Keamanan Negara',
     ];
 
     private array $recordModels = [
@@ -61,10 +61,11 @@ class PimpinanFileManagerController extends Controller
             ->get()
             ->groupBy(fn ($file) => $file->unit.'|'.$file->record_id);
 
-        $titles = $this->recordTitles($pageRows);
+        $meta = $this->recordMeta($pageRows);
 
-        $groups = $pageRows->map(function ($row) use ($attachments, $titles) {
+        $groups = $pageRows->map(function ($row) use ($attachments, $meta) {
             $key = $row->unit.'|'.$row->record_id;
+            $info = $meta[$row->record_table.'|'.$row->record_id] ?? [];
 
             return (object) [
                 'unit' => $row->unit,
@@ -72,7 +73,8 @@ class PimpinanFileManagerController extends Controller
                 'record_table' => $row->record_table,
                 'files_count' => (int) $row->files_count,
                 'latest_at' => $row->latest_at ? Carbon::parse($row->latest_at) : null,
-                'title' => $titles[$row->record_table.'|'.$row->record_id] ?? '',
+                'title' => $info['title'] ?? '',
+                'category' => $info['category'] ?? '',
                 'files' => $attachments->get($key, collect()),
             ];
         });
@@ -85,27 +87,30 @@ class PimpinanFileManagerController extends Controller
         return view('pimpinan.file-manager', compact('groups', 'filters', 'units'));
     }
 
-    private function recordTitles($pageRows): array
+    private function recordMeta($pageRows): array
     {
-        $titles = [];
+        $meta = [];
 
         foreach ($pageRows->groupBy('record_table') as $table => $rows) {
-            $meta = $this->recordModels[$table] ?? null;
-            if ($meta === null) {
+            $modelInfo = $this->recordModels[$table] ?? null;
+            if ($modelInfo === null) {
                 continue;
             }
 
-            [$model, $column] = $meta;
+            [$model, $column] = $modelInfo;
             $records = $model::query()
                 ->whereIn('id', $rows->pluck('record_id')->all())
-                ->get(['id', $column]);
+                ->get(['id', $column, 'kategori']);
 
             foreach ($records as $record) {
-                $titles[$table.'|'.$record->id] = (string) ($record->{$column} ?? '');
+                $meta[$table.'|'.$record->id] = [
+                    'title' => (string) ($record->{$column} ?? ''),
+                    'category' => (string) ($record->kategori ?? ''),
+                ];
             }
         }
 
-        return $titles;
+        return $meta;
     }
 
     public function export(Request $request, string $type)

@@ -15,10 +15,10 @@
     </section>
 
     @if($errors->any())
-        <div class="rounded-xl border border-danger/25 bg-[var(--danger-soft)] p-4 text-sm text-danger">
+        <x-ui.alert variant="error">
             <p class="font-semibold">Form belum dapat disimpan.</p>
             <ul class="mt-2 list-disc space-y-1 pl-5">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
-        </div>
+        </x-ui.alert>
     @endif
 
     <form method="POST" enctype="multipart/form-data" action="{{ $orang->exists ? route('database-orang.update', $orang) : route('database-orang.store') }}" class="space-y-5">

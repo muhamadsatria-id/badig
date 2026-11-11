@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToUnit;
-
 use Illuminate\Database\Eloquent\Model;
 
 class Unit4Security extends Model
@@ -29,8 +28,23 @@ class Unit4Security extends Model
         ];
     }
 
-    public function unit(){ return $this->belongsTo(Unit::class); }
-    public function district(){ return $this->belongsTo(District::class); }
-    public function village(){ return $this->belongsTo(Village::class); }
-    public function operator(){ return $this->belongsTo(User::class, 'operator_id')->withTrashed(); }
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
+    public function district()
+    {
+        return $this->belongsTo(District::class);
+    }
+
+    public function village()
+    {
+        return $this->belongsTo(Village::class);
+    }
+
+    public function operator()
+    {
+        return $this->belongsTo(User::class, 'operator_id')->withTrashed();
+    }
 }

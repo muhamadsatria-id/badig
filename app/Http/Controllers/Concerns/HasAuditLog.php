@@ -6,13 +6,11 @@ use App\Services\AuditService;
 
 trait HasAuditLog
 {
-
     protected function audit(
         $action,
         $module,
-        $description=null
-    )
-    {
+        $description = null
+    ) {
 
         AuditService::log(
             $action,
@@ -21,5 +19,4 @@ trait HasAuditLog
         );
 
     }
-
 }

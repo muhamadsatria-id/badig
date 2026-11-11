@@ -21,7 +21,7 @@ class SecurityHeadersTest extends TestCase
         $this->assertStringContainsString("default-src 'self'", $policy);
         $this->assertStringContainsString("frame-ancestors 'none'", $policy);
         $this->assertStringContainsString("script-src-attr 'none'", $policy);
-        $this->assertMatchesRegularExpression("/nonce-[A-Za-z0-9+\\/=]+/", $policy);
+        $this->assertMatchesRegularExpression('/nonce-[A-Za-z0-9+\\/=]+/', $policy);
     }
 
     public function test_sitemap_is_public_xml_and_excludes_private_routes(): void

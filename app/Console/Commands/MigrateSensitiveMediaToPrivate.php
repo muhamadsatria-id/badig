@@ -29,6 +29,7 @@ class MigrateSensitiveMediaToPrivate extends Command
                     if (! $sameHash) {
                         $this->warn("Konflik isi; file publik dipertahankan untuk pemeriksaan manual: {$path}");
                         $skipped++;
+
                         continue;
                     }
 
@@ -36,10 +37,12 @@ class MigrateSensitiveMediaToPrivate extends Command
                     if (! $this->option('dry-run') && ! $public->delete($path)) {
                         $this->warn("File privat sudah ada, tetapi duplikat publik gagal dihapus: {$path}");
                         $skipped++;
+
                         continue;
                     }
 
                     $moved++;
+
                     continue;
                 }
 
@@ -47,18 +50,21 @@ class MigrateSensitiveMediaToPrivate extends Command
 
                 if ($this->option('dry-run')) {
                     $moved++;
+
                     continue;
                 }
 
                 $stream = $public->readStream($path);
                 if (! is_resource($stream)) {
                     $this->error("Gagal membaca: {$path}");
+
                     continue;
                 }
 
                 try {
                     if (! $private->writeStream($path, $stream)) {
                         $this->error("Gagal menulis: {$path}");
+
                         continue;
                     }
                 } finally {

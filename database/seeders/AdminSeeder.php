@@ -130,6 +130,7 @@ class AdminSeeder extends Seeder
                 ])->save();
 
                 $this->command?->info("[ada]    {$account['label']} → {$email} (password tidak diubah)");
+
                 continue;
             }
 

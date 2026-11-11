@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -154,7 +155,7 @@ return new class extends Migration
     private function materialiseInsertValues(array $values): array
     {
         foreach ($values as $key => $value) {
-            if ($value instanceof \Illuminate\Database\Query\Expression) {
+            if ($value instanceof Expression) {
                 $values[$key] = now();
             }
         }

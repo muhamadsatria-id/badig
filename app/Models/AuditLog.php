@@ -16,7 +16,7 @@ class AuditLog extends Model
 
     public static function record(string $action, ?string $description = null, ?User $user = null): void
     {
-        if (!Schema::hasTable('audit_logs')) {
+        if (! Schema::hasTable('audit_logs')) {
             return;
         }
 

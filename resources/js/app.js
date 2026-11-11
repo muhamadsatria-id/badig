@@ -84,11 +84,38 @@ Alpine.data('themeSwitcher', () => ({
     },
 }));
 
-// Live search: every GET filter/search form auto-submits while the user types.
-// A global delegated handler is used so all current and future search bars work
-// without per-form wiring. Opt a form out with the `data-no-live-search` attribute.
-const LIVE_SEARCH_DELAY = 500;
-const LIVE_SEARCH_FOCUS_KEY = 'badig-live-search-focus';
+// Dismissible flash/validation alerts: hide themselves after a timeout and can
+// be closed manually. Wired through the shared <x-ui.alert> component.
+Alpine.data('badigAlert', (timeout = 5000) => ({
+    show: true,
+    timer: null,
+
+    init() {
+        const delay = Number(timeout);
+
+        if (delay > 0) {
+            this.timer = window.setTimeout(() => {
+                this.show = false;
+            }, delay);
+        }
+    },
+
+    destroy() {
+        window.clearTimeout(this.timer);
+    },
+
+    close() {
+        window.clearTimeout(this.timer);
+        this.show = false;
+    },
+}));
+
+// Live search: every GET filter/search form refreshes its results in place with
+// fetch, so the page never reloads while the user types. The form declares the
+// region to refresh with `data-live-target="<css selector>"`; the fallback is the
+// whole content area (`#badig-content`). Opt a form out with `data-no-live-search`.
+const LIVE_SEARCH_DELAY = 800;
+const LIVE_SEARCH_FALLBACK_TARGET = '#badig-content';
 
 function isLiveSearchField(target) {
     if (!target || !target.form) {
@@ -104,6 +131,10 @@ function isLiveSearchField(target) {
     return !excluded.includes(target.type);
 }
 
+function liveSearchTarget(form) {
+    return form.dataset.liveTarget || LIVE_SEARCH_FALLBACK_TARGET;
+}
+
 function scheduleLiveSearch(target) {
     const form = target.form;
 
@@ -113,24 +144,86 @@ function scheduleLiveSearch(target) {
 
     window.clearTimeout(form.__badigLiveSearchTimer);
     form.__badigLiveSearchTimer = window.setTimeout(() => {
-        try {
-            sessionStorage.setItem(LIVE_SEARCH_FOCUS_KEY, target.name || '');
-        } catch (error) {
-            // Ignore storage errors.
-        }
-
-        try {
-            if (typeof form.requestSubmit === 'function') {
-                form.requestSubmit();
-
-                return;
-            }
-        } catch (error) {
-            // Fall back to a plain submit below.
-        }
-
-        form.submit();
+        runLiveSearch(form);
     }, Number(form.dataset.liveSearchDelay || LIVE_SEARCH_DELAY));
+}
+
+function buildLiveSearchUrl(form) {
+    const url = new URL(form.getAttribute('action') || window.location.href, window.location.href);
+    const params = new URLSearchParams();
+
+    new FormData(form).forEach((value, key) => {
+        if (typeof value === 'string' && value !== '') {
+            params.append(key, value);
+        }
+    });
+
+    url.search = params.toString();
+
+    return url;
+}
+
+// Replace a live region with the same region from a freshly fetched page.
+function swapLiveRegion(selector, url) {
+    const current = document.querySelector(selector);
+
+    if (!current) {
+        window.location.assign(url.toString());
+
+        return;
+    }
+
+    fetch(url.toString(), {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            Accept: 'text/html',
+        },
+        credentials: 'same-origin',
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('HTTP ' + response.status);
+            }
+
+            return response.text();
+        })
+        .then((html) => {
+            const next = new DOMParser().parseFromString(html, 'text/html').querySelector(selector);
+
+            if (!next) {
+                throw new Error('Live region tidak ditemukan pada respons.');
+            }
+
+            try {
+                window.Alpine?.destroyTree?.(current);
+            } catch (error) {
+                // Ignore cleanup failures.
+            }
+
+            current.replaceWith(next);
+
+            try {
+                window.history.replaceState({}, '', url.toString());
+            } catch (error) {
+                // Ignore history failures.
+            }
+
+            try {
+                window.Alpine?.initTree?.(next);
+            } catch (error) {
+                // Ignore re-init failures; the swapped markup is still visible.
+            }
+
+            document.dispatchEvent(new CustomEvent('badig:live-region', { detail: { region: next } }));
+        })
+        .catch(() => {
+            // Fall back to a real navigation so the user still gets results.
+            window.location.assign(url.toString());
+        });
+}
+
+function runLiveSearch(form) {
+    swapLiveRegion(liveSearchTarget(form), buildLiveSearchUrl(form));
 }
 
 document.addEventListener('input', (event) => {
@@ -142,45 +235,78 @@ document.addEventListener('input', (event) => {
 document.addEventListener('change', (event) => {
     const target = event.target;
 
-    if (target && target.tagName === 'SELECT' && isLiveSearchField(target)) {
+    if (!target) {
+        return;
+    }
+
+    // "Pilih semua" checkbox used by the bulk-export tables.
+    if (target.id === 'selectAllRows') {
+        const scope = target.closest('[data-live-region]') || document;
+
+        scope.querySelectorAll('.rowCheckbox').forEach((checkbox) => {
+            checkbox.checked = target.checked;
+        });
+
+        return;
+    }
+
+    if (target.tagName === 'SELECT' && isLiveSearchField(target)) {
         scheduleLiveSearch(target);
     }
 });
 
-// Restore focus to the search field after a live-search reload.
-document.addEventListener('DOMContentLoaded', () => {
-    let field = null;
+// Submitting a filter/search form (the "Filter" button or pressing Enter) also
+// refreshes in place instead of reloading the page.
+document.addEventListener('submit', (event) => {
+    const form = event.target;
 
-    try {
-        field = sessionStorage.getItem(LIVE_SEARCH_FOCUS_KEY);
-    } catch (error) {
-        field = null;
-    }
-
-    if (!field) {
+    if (event.defaultPrevented || !form || (form.getAttribute('method') || 'get').toLowerCase() !== 'get' || form.hasAttribute('data-no-live-search')) {
         return;
     }
 
+    window.clearTimeout(form.__badigLiveSearchTimer);
+    event.preventDefault();
+    runLiveSearch(form);
+});
+
+// Keep pagination inside a live region in-place as well.
+document.addEventListener('click', (event) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+    }
+
+    const link = event.target.closest('a[href]');
+
+    if (!link || link.target === '_blank' || link.hasAttribute('download')) {
+        return;
+    }
+
+    const pagination = link.closest('nav[role="navigation"], .pagination');
+
+    if (!pagination) {
+        return;
+    }
+
+    const region = pagination.closest('[data-live-region]');
+
+    if (!region || !region.id) {
+        return;
+    }
+
+    let url;
+
     try {
-        sessionStorage.removeItem(LIVE_SEARCH_FOCUS_KEY);
+        url = new URL(link.href, window.location.href);
     } catch (error) {
-        // Ignore storage errors.
+        return;
     }
 
-    const escaped = field.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-    const candidate = Array.from(document.querySelectorAll(`[name="${escaped}"]`)).find((element) => {
-        const form = element.form;
-
-        return form && (form.getAttribute('method') || 'get').toLowerCase() === 'get';
-    });
-
-    if (candidate && document.activeElement === document.body) {
-        candidate.focus();
-
-        if (typeof candidate.setSelectionRange === 'function' && (candidate.type === 'text' || candidate.type === 'search')) {
-            candidate.setSelectionRange(candidate.value.length, candidate.value.length);
-        }
+    if (url.origin !== window.location.origin) {
+        return;
     }
+
+    event.preventDefault();
+    swapLiveRegion('#' + region.id, url);
 });
 
 Alpine.start();

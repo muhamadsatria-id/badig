@@ -23,7 +23,7 @@
     </section>
 
     <section class="badig-card p-4">
-        <form method="GET" class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_220px_220px_auto]">
+        <form method="GET" data-live-target="#badig-results" class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_220px_220px_auto]">
             <div class="relative">
                 <flux:icon name="magnifying-glass" class="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" />
                 <input name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Cari nama, NIK, nomor orang, perkara, atau alamat..." class="badig-field h-11 w-full pl-10 pr-3 text-sm">
@@ -40,7 +40,7 @@
         </form>
     </section>
 
-    <section class="badig-card overflow-visible">
+    <section id="badig-results" data-live-region class="badig-card overflow-visible">
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead>

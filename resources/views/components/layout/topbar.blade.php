@@ -22,11 +22,6 @@
         </div>
 
         <div class="flex items-center gap-2">
-            <form action="{{ url()->current() }}" method="GET" class="relative hidden lg:block">
-                <flux:icon name="magnifying-glass" class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-faint" />
-                <input name="q" value="{{ request('q') }}" placeholder="Cari data..." class="badig-focus h-10 w-52 rounded-lg border border-line bg-surface pl-9 pr-3 text-xs text-ink shadow-sm placeholder:text-faint xl:w-64">
-            </form>
-
             <button type="button" data-action="reload-page" class="badig-focus hidden h-10 items-center gap-2 rounded-lg border border-line bg-surface px-3 text-xs font-semibold text-ink shadow-sm transition hover:bg-surface-raised md:inline-flex">
                 <flux:icon name="arrow-path" class="size-4 text-muted" />
                 Sync

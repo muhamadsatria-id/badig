@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\EnsureRoleUnitConsistency;
+use App\Http\Middleware\EnsureSessionFresh;
+use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\UnitIsolation;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -11,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+        $middleware->append(SecurityHeaders::class);
 
         $trustedProxies = array_values(array_filter(array_map(
             static fn (string $proxy): string => trim($proxy),
@@ -32,10 +37,10 @@ return Application::configure(basePath: dirname(__DIR__))
         }
 
         $middleware->alias([
-            'role' => \App\Http\Middleware\CheckRole::class,
-            'session.fresh' => \App\Http\Middleware\EnsureSessionFresh::class,
-            'role.unit.valid' => \App\Http\Middleware\EnsureRoleUnitConsistency::class,
-            'unit.isolation' => \App\Http\Middleware\UnitIsolation::class,
+            'role' => CheckRole::class,
+            'session.fresh' => EnsureSessionFresh::class,
+            'role.unit.valid' => EnsureRoleUnitConsistency::class,
+            'unit.isolation' => UnitIsolation::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

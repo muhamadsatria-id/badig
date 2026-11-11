@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Schema;
 
 class User extends Authenticatable
@@ -13,9 +13,13 @@ class User extends Authenticatable
     use HasFactory, Notifiable, SoftDeletes;
 
     public const ROLE_UNIT_1 = 1;
+
     public const ROLE_UNIT_2 = 2;
+
     public const ROLE_UNIT_3 = 3;
+
     public const ROLE_UNIT_4 = 4;
+
     public const ROLE_SUPER_ADMIN = 5;
 
     protected $fillable = [

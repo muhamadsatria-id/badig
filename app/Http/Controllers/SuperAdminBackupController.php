@@ -3,13 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Artisan;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SuperAdminBackupController extends Controller
 {
-
     public function exportDatabase()
     {
         $filename = 'badig_backup_'.date('Ymd_His').'.sql';
@@ -32,26 +28,22 @@ class SuperAdminBackupController extends Controller
             ->deleteFileAfterSend(true);
     }
 
-
     public function importDatabase(Request $request)
     {
 
         $request->validate([
-            'database_file'=>'required|mimes:sql,gz'
+            'database_file' => 'required|mimes:sql,gz',
         ]);
-
 
         $file =
             $request->file('database_file')
-            ->store('backup');
-
+                ->store('backup');
 
         return back()
-        ->with(
-            'success',
-            'File backup berhasil diupload'
-        );
+            ->with(
+                'success',
+                'File backup berhasil diupload'
+            );
 
     }
-
 }

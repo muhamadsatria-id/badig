@@ -6,7 +6,6 @@ use App\Models\AuditLog;
 
 class AuditLogController extends Controller
 {
-
     public function index()
     {
 
@@ -14,12 +13,10 @@ class AuditLogController extends Controller
             ->with('user')
             ->get();
 
-
         return view(
             'super-admin.audit.index',
             compact('logs')
         );
 
     }
-
 }

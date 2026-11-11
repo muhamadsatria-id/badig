@@ -38,7 +38,7 @@ class Unit extends Model
             if (Schema::hasColumn($this->getTable(), 'is_active')) {
                 return $query->where(function ($q) {
                     $q->where('is_active', true)
-                      ->orWhereNull('is_active');
+                        ->orWhereNull('is_active');
                 });
             }
         } catch (\Throwable $e) {

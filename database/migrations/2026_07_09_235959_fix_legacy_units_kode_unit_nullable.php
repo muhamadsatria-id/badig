@@ -34,7 +34,7 @@ return new class extends Migration
 
             try {
                 DB::statement("ALTER TABLE `units` MODIFY `{$column}` VARCHAR(50) NULL");
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 report($e);
             }
         }

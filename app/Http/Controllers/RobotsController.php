@@ -8,8 +8,8 @@ class RobotsController extends Controller
 {
     public function __invoke(): Response
     {
-        $content = implode("
-", [
+        $content = implode('
+', [
             'User-agent: *',
             'Allow: /',
             'Disallow: /dashboard',

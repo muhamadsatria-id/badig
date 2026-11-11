@@ -35,6 +35,7 @@
             font-size: 12pt;
             font-weight: bold;
             letter-spacing: 0.5px;
+            text-decoration: underline; /* Garis bawah pada DOKUMEN REKAM DATA INTERNAL */
         }
         .doc-number {
             font-size: 10pt;
@@ -86,6 +87,7 @@
             text-align: center;
             font-weight: bold;
             letter-spacing: 1.5px;
+            text-decoration: underline; /* Garis bawah header seksi */
             padding: 6px 0;
             margin-top: 15px;
             margin-bottom: 4px;
@@ -108,21 +110,24 @@
             margin-bottom: 8px;
         }
 
-        /* --- LAMPIRAN (BERPINDAH KE HALAMAN BARU) --- */
+        /* --- LAMPIRAN (BERPINDAH KE HALAMAN BARU & GRID FIX) --- */
         .attachment-section {
             page-break-before: always;
             break-before: page;
             margin-top: 0;
         }
+        
         .grid-table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed; /* Mencegah sel membengkak melebihi halaman */
             margin-top: 6px;
         }
         .grid-table td {
             width: 50%;
-            padding: 5px;
+            padding: 6px;
             vertical-align: top;
+            box-sizing: border-box;
         }
         .attachment-box {
             border: 1px solid #000000;
@@ -131,25 +136,38 @@
             background-color: transparent;
             page-break-inside: avoid;
             break-inside: avoid;
+            box-sizing: border-box;
+            width: 100%;
         }
-        .attachment-box img {
-            max-width: 100%;
-            max-height: 180px;
-            object-fit: contain;
+        
+        .img-link {
+            display: block;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
         }
-        .doc-meta {
-            margin-top: 6px;
-            font-size: 8.5pt;
-            color: #000000;
-            text-align: left;
-            word-wrap: break-word;
+        .img-responsive {
+            max-width: 100% !important;
+            height: auto !important;
+            display: block;
+            margin: 0 auto 6px auto;
         }
+        
         .doc-link {
-            display: inline-block;
-            margin-top: 4px;
             color: #0000ee;
             text-decoration: underline;
             font-size: 8.5pt;
+        }
+
+        /* LIST BERKAS DOKUMEN POLOS */
+        .doc-list {
+            font-size: 9pt;
+            padding-left: 20px;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+        .doc-list li {
+            margin-bottom: 4px;
         }
 
         /* --- FOOTER DOKUMEN --- */
@@ -201,8 +219,8 @@
         </tr>
     </table>
 
-    <!-- SEKSI A: IDENTITAS & ATRIBUT -->
-    <div class="section-header">A. IDENTITAS DAN ATRIBUT REKAM DATA</div>
+    <!-- SEKSI A: IDENTITAS & ATRIBUT (A. DIHAPUS, DIGARISBAWAHI) -->
+    <div class="section-header">IDENTITAS DAN ATRIBUT REKAM DATA</div>
 
     <!-- BINGKAI KOTAK PALING LUAR SAJA -->
     <div class="outer-border-box">
@@ -229,10 +247,10 @@
         </table>
     </div>
 
-    <!-- SEKSI B: LAMPIRAN (OTOMATIS DI HALAMAN BARU) -->
+    <!-- SEKSI B: LAMPIRAN (B. DIHAPUS, DIGARISBAWAHI, OTOMATIS DI HALAMAN BARU) -->
     @if($attachmentImages->isNotEmpty() || $documentAttachments->isNotEmpty())
     <div class="attachment-section">
-        <div class="section-header" style="margin-top: 0;">B. LAMPIRAN DOKUMEN PENDUKUNG</div>
+        <div class="section-header" style="margin-top: 0;">LAMPIRAN DOKUMEN PENDUKUNG</div>
 
         <!-- LAMPIRAN FOTO / GAMBAR -->
         @if($attachmentImages->isNotEmpty())
@@ -243,10 +261,13 @@
                 @foreach($chunk as $row)
                 <td>
                     <div class="attachment-box">
-                        <img src="{{ $row['data_uri'] }}" alt="Gambar Lampiran">
-                        <div class="doc-meta">
-                            <strong>{{ $row['file']->original_name }}</strong><br>
-                            Format: {{ strtoupper($row['file']->extension) }} · Ukuran: {{ $row['file']->human_file_size }}
+                        <a href="{{ route('units.attachments.preview', [$unit, $row['file']->id]) }}" target="_blank" class="img-link">
+                            <img src="{{ $row['data_uri'] }}" alt="Gambar Lampiran" class="img-responsive" width="100%">
+                        </a>
+                        <div style="margin-top: 4px; font-size: 8pt; text-align: center;">
+                            <a href="{{ route('units.attachments.preview', [$unit, $row['file']->id]) }}" class="doc-link" target="_blank">Lihat</a>
+                            &nbsp;&nbsp;|&nbsp;&nbsp;
+                            <a href="{{ route('units.attachments.download', [$unit, $row['file']->id]) }}" class="doc-link">Unduh</a>
                         </div>
                     </div>
                 </td>
@@ -259,32 +280,16 @@
         </table>
         @endif
 
-        <!-- LAMPIRAN BERKAS DOKUMEN -->
+        <!-- LAMPIRAN BERKAS DOKUMEN (LIST POLOS TANPA KOTAK) -->
         @if($documentAttachments->isNotEmpty())
         <div class="sub-heading">BERKAS DOKUMEN PENDUKUNG (PDF / WORD / EXCEL / DLL)</div>
-        <table class="grid-table">
-            @foreach($documentAttachments->chunk(2) as $chunk)
-            <tr>
-                @foreach($chunk as $file)
-                <td>
-                    <div class="attachment-box" style="text-align: left;">
-                        <div style="font-weight: bold; font-size: 9.5pt;">📄 {{ $file->original_name }}</div>
-                        <div class="doc-meta">
-                            Format: <strong>{{ strtoupper($file->extension) }}</strong> · Ukuran: <strong>{{ $file->human_file_size }}</strong><br>
-                            Diunggah: {{ optional($file->created_at)->format('d/m/Y H:i') }}
-                        </div>
-                        <div style="margin-top: 6px;">
-                            <a href="{{ route('units.attachments.download', [$unit, $file->id]) }}" class="doc-link" target="_blank" rel="noopener noreferrer">Unduh Berkas BADIG ({{ strtoupper($file->extension) }})</a>
-                        </div>
-                    </div>
-                </td>
-                @endforeach
-                @if($chunk->count() === 1)
-                <td></td>
-                @endif
-            </tr>
+        <ul class="doc-list">
+            @foreach($documentAttachments as $file)
+                <li>
+                    <a href="{{ route('units.attachments.download', [$unit, $file->id]) }}" class="doc-link" target="_blank">{{ $file->original_name }}</a>
+                </li>
             @endforeach
-        </table>
+        </ul>
         @endif
     </div>
     @endif

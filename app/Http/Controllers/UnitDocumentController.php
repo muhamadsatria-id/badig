@@ -18,10 +18,10 @@ use Illuminate\Support\Str;
 class UnitDocumentController extends Controller
 {
     private array $modules = [
-        'unit1' => ['id' => 1, 'title' => 'Ideologi Politik', 'model' => Unit1Ideology::class, 'table' => 'unit1_ideology', 'main' => 'nama_subjek', 'fields' => ['tanggal_pembuatan','pelapor_nama','pelapor_nrp','kategori','nama_subjek','district_id','village_id','pengikut','status_legal','catatan_rawan','koordinat_lat','koordinat_lng','created_at','updated_at']],
-        'unit2' => ['id' => 2, 'title' => 'Ekonomi', 'model' => Unit2Economy::class, 'table' => 'unit2_economy', 'main' => 'nama_aset', 'fields' => ['tanggal_pembuatan','pelapor_nama','pelapor_nrp','kategori','nama_aset','district_id','village_id','alamat','kapasitas','koordinat_lat','koordinat_lng','created_at','updated_at']],
-        'unit3' => ['id' => 3, 'title' => 'Sosial Budaya', 'model' => Unit3Sosbud::class, 'table' => 'unit3_sosbud', 'main' => 'nama_organisasi', 'fields' => ['tanggal_pembuatan','pelapor_nama','pelapor_nrp','kategori','nama_organisasi','pimpinan','district_id','village_id','total_anggota','legalitas','catatan_aktivitas','koordinat_lat','koordinat_lng','created_at','updated_at']],
-        'unit4' => ['id' => 4, 'title' => 'Keamanan Negara', 'model' => Unit4Security::class, 'table' => 'unit4_security_crim', 'main' => 'nama_kasus', 'fields' => ['tanggal_pembuatan','pelapor_nama','pelapor_nrp','kategori','nama_kasus','district_id','village_id','modus','koordinat_lat','koordinat_lng','status_kasus','created_at','updated_at']],
+        'unit1' => ['id' => 1, 'title' => 'Ideologi Politik', 'model' => Unit1Ideology::class, 'table' => 'unit1_ideology', 'main' => 'nama_subjek', 'fields' => ['tanggal_pembuatan', 'pelapor_nama', 'pelapor_nrp', 'kategori', 'nama_subjek', 'district_id', 'village_id', 'pengikut', 'status_legal', 'catatan_rawan', 'koordinat_lat', 'koordinat_lng', 'created_at', 'updated_at']],
+        'unit2' => ['id' => 2, 'title' => 'Ekonomi', 'model' => Unit2Economy::class, 'table' => 'unit2_economy', 'main' => 'nama_aset', 'fields' => ['tanggal_pembuatan', 'pelapor_nama', 'pelapor_nrp', 'kategori', 'nama_aset', 'district_id', 'village_id', 'alamat', 'kapasitas', 'koordinat_lat', 'koordinat_lng', 'created_at', 'updated_at']],
+        'unit3' => ['id' => 3, 'title' => 'Sosial Budaya', 'model' => Unit3Sosbud::class, 'table' => 'unit3_sosbud', 'main' => 'nama_organisasi', 'fields' => ['tanggal_pembuatan', 'pelapor_nama', 'pelapor_nrp', 'kategori', 'nama_organisasi', 'pimpinan', 'district_id', 'village_id', 'total_anggota', 'legalitas', 'catatan_aktivitas', 'koordinat_lat', 'koordinat_lng', 'created_at', 'updated_at']],
+        'unit4' => ['id' => 4, 'title' => 'Keamanan Negara', 'model' => Unit4Security::class, 'table' => 'unit4_security_crim', 'main' => 'nama_kasus', 'fields' => ['tanggal_pembuatan', 'pelapor_nama', 'pelapor_nrp', 'kategori', 'nama_kasus', 'district_id', 'village_id', 'modus', 'koordinat_lat', 'koordinat_lng', 'status_kasus', 'created_at', 'updated_at']],
     ];
 
     private function module(string $unit): array
@@ -34,6 +34,7 @@ class UnitDocumentController extends Controller
             }
         } catch (\Throwable) {
         }
+
         return $module;
     }
 
@@ -47,7 +48,7 @@ class UnitDocumentController extends Controller
     {
         $this->authorizeUnit($unit);
         $module = $this->module($unit);
-        $item = $module['model']::with(['district','village','operator'])->findOrFail($id);
+        $item = $module['model']::with(['district', 'village', 'operator'])->findOrFail($id);
         abort_unless(auth()->user()->canAccessUnitId((int) ($item->unit_id ?: $module['id'])), 403);
         $attachments = DataAttachment::query()
             ->where('unit', $unit)->where('unit_id', (int) $module['id'])
@@ -57,6 +58,7 @@ class UnitDocumentController extends Controller
                     ->orWhere('attachment_role', '!=', 'report_pdf');
             })
             ->latest()->get();
+
         return [$module, $item, $attachments];
     }
 
@@ -64,6 +66,7 @@ class UnitDocumentController extends Controller
     {
         [$module, $item, $attachments] = $this->findRecord($unit, $id);
         AuditLog::record('PREVIEW_DOCUMENT', 'Membuka pratinjau dokumen '.$module['title'].' ID '.$id);
+
         return view('documents.unit', compact('unit', 'module', 'item', 'attachments'));
     }
 
@@ -82,6 +85,7 @@ class UnitDocumentController extends Controller
 
         AuditLog::record('DOWNLOAD_PDF', 'Mengunduh PDF dokumen '.$module['title'].' ID '.$id);
         $filename = Str::slug('BADIG '.$module['title'].' '.$item->{$module['main']}.' '.$item->id).'.pdf';
+
         return Pdf::loadView('units.pdf_cetak', compact('unit', 'module', 'item', 'attachments', 'mapSnapshot', 'attachmentImages', 'documentAttachments'))
             ->setPaper('a4', 'portrait')
             ->stream($filename);

@@ -12,15 +12,13 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class DatabaseOrangImport implements ToCollection, WithHeadingRow, WithChunkReading
+class DatabaseOrangImport implements ToCollection, WithChunkReading, WithHeadingRow
 {
     private const MAX_IMPORT_ROWS = 5000;
 
     private int $processed = 0;
 
-    public function __construct(private User $user)
-    {
-    }
+    public function __construct(private User $user) {}
 
     public function collection(Collection $rows): void
     {

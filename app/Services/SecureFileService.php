@@ -14,10 +14,10 @@ class SecureFileService
             'png',
             'pdf',
             'docx',
-            'xlsx'
+            'xlsx',
         ];
 
-        if (!in_array(
+        if (! in_array(
             strtolower($file->extension()),
             $allowed
         )) {

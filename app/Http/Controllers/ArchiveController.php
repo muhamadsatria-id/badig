@@ -3,15 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Archive;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Maatwebsite\Excel\Facades\Excel;
 
 class ArchiveController extends Controller
 {
-
     public function index()
     {
         $archives = Archive::latest()->get();
@@ -22,55 +19,46 @@ class ArchiveController extends Controller
         );
     }
 
-
     public function store(Request $request)
     {
 
         $request->validate([
 
-            'judul'=>'required',
-            'tanggal_pembuatan_file'=>'required|date',
-            'attachment_file'=>'nullable|mimes:jpg,jpeg,pdf,docx,xlsx|max:10240'
+            'judul' => 'required',
+            'tanggal_pembuatan_file' => 'required|date',
+            'attachment_file' => 'nullable|mimes:jpg,jpeg,pdf,docx,xlsx|max:10240',
 
         ]);
-
 
         $data = $request->only([
             'judul',
-            'tanggal_pembuatan_file'
+            'tanggal_pembuatan_file',
         ]);
 
-
-        if($request->hasFile('attachment_file')){
+        if ($request->hasFile('attachment_file')) {
 
             $data['attachment_file'] =
                 $request->file('attachment_file')
-                ->store('archives','public');
+                    ->store('archives', 'public');
 
         }
-
 
         $data['unit_id'] =
             Auth::user()->unit_id;
 
-
         Archive::create($data);
 
-
         return back()
-        ->with('success','Arsip berhasil disimpan');
+            ->with('success', 'Arsip berhasil disimpan');
 
     }
-
-
 
     public function exportSelected(Request $request)
     {
 
         $request->validate([
-            'ids'=>'required|array'
+            'ids' => 'required|array',
         ]);
-
 
         $archives =
             Archive::whereIn(
@@ -78,17 +66,14 @@ class ArchiveController extends Controller
                 $request->ids
             )->get();
 
-
         $pdf = Pdf::loadView(
             'archives.pdf',
             compact('archives')
         );
-
 
         return $pdf->download(
             'BADIG_ARSIP_EXPORT.pdf'
         );
 
     }
-
 }

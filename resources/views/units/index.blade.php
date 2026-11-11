@@ -40,24 +40,8 @@
         </div>
     </div>
 
-    @if(session('success') || session('error') || $errors->any())
-    <div class="mt-6 rounded-2xl border border-line bg-surface px-4 py-3 shadow-sm badig-card">
-        @if(session('success'))
-        <div class="flex items-center gap-2 text-sm font-medium text-accent">
-            <span class="material-symbols-outlined text-base text-accent">check_circle</span>
-            {{ session('success') }}
-        </div>
-        @elseif(session('error') || $errors->any())
-        <div class="flex items-center gap-2 text-sm font-medium text-danger">
-            <span class="material-symbols-outlined text-base text-danger">error</span>
-            {{ session('error') ?: $errors->first() }}
-        </div>
-        @endif
-    </div>
-    @endif
-
     <div class="mt-6 rounded-2xl border border-line bg-surface p-5 shadow-sm sm:p-6 badig-card">
-        <form method="GET" action="{{ route('units.index', $unit) }}"
+        <form method="GET" action="{{ route('units.index', $unit) }}" data-live-target="#badig-results"
             class="flex flex-col gap-3 lg:flex-row lg:items-end">
             <div class="flex-1">
                 <label class="mb-1 block text-[11px] font-semibold uppercase tracking-[0.24em] text-muted">
@@ -96,7 +80,7 @@
             @csrf
         </form>
 
-        <div class="mt-6 overflow-x-auto overflow-y-visible rounded-2xl border border-line">
+        <div id="badig-results" data-live-region class="mt-6 overflow-x-auto overflow-y-visible rounded-2xl border border-line">
             <div
                 class="flex flex-col gap-2 border-b border-line bg-surface-raised p-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -320,16 +304,3 @@
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script @cspNonce>
-document.addEventListener('DOMContentLoaded', () => {
-    const all = document.getElementById('selectAllRows');
-    const rows = document.querySelectorAll('.rowCheckbox');
-
-    all?.addEventListener('change', () => rows.forEach((checkbox) => {
-        checkbox.checked = all.checked;
-    }));
-});
-</script>
-@endpush

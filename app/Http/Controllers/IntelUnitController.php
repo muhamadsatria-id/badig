@@ -32,6 +32,7 @@ class IntelUnitController extends Controller
     private array $modules = [
         'unit1' => [
             'id' => 1,
+            'code' => 'IP',
             'title' => 'Ideologi Politik',
             'model' => Unit1Ideology::class,
             'table' => 'unit1_ideology',

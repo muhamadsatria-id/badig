@@ -65,6 +65,7 @@ return new class extends Migration
 
             if (! DB::table('units')->where('id', $id)->exists()) {
                 DB::table('units')->insert($insert);
+
                 continue;
             }
 

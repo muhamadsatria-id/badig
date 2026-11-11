@@ -10,6 +10,6 @@ class BadigNotification extends Model
         'user_id',
         'title',
         'message',
-        'is_read'
+        'is_read',
     ];
 }
