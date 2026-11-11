@@ -616,7 +616,10 @@ document.addEventListener('DOMContentLoaded', () => {
         attribution: '&copy; OpenStreetMap',
     }).addTo(map);
 
-    const marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+    const marker = L.marker([defaultLat, defaultLng], {
+        draggable: true,
+        icon: L.divIcon(window.badigMapPinIcon(40)),
+    }).addTo(map);
 
     function setPoint(lat, lng, zoom = 15) {
         lat = Number(lat);

@@ -78,7 +78,7 @@ Namun QA gabungan (runtime + statis, total **23 temuan statis: 2 High · 8 Mediu
    :class="actionFilter === '{{ $key }}' ? 'border-accent ...' : 'border-line ... text-ink' badig-action badig-action-primary"
    ```
    → `Uncaught SyntaxError: Unexpected identifier 'badig'` + 4× `Alpine Expression Error`. Dampak: binding `:class` gagal total sehingga **tombol filter tidak pernah menampilkan status aktif** (cacat UX). Logika filter sendiri tetap berfungsi (x-show/actionFilter normal).
-2. 🟠 **CSP memblokir ikon marker Leaflet** — `app/Http/Middleware/SecurityHeaders.php:81-85`. `script-src` mengizinkan `https://unpkg.com` (JS Leaflet jalan), tetapi `img-src` hanya `'self' data: blob: https://tile.openstreetmap.org` → `https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png` **diblokir**. Akibat: **marker peta tidak menampilkan ikon pin** di form create/unit (halaman peta tampak "kosong" tanpa penanda).
+2. ✅ **CSP memblokir ikon marker Leaflet** — **SUDAH DIPERBAIKI**: marker tidak lagi memakai `marker-icon.png` dari CDN, melainkan pin SVG inline bergaya Google Maps (`window.badigMapPinIcon` di `resources/js/app.js`, dipakai di `units/form.blade.php` & `dashboard/index.blade.php`). Karena SVG inline, `img-src` CSP tidak lagi relevan dan marker selalu tampil. (Latar lama: `app/Http/Middleware/SecurityHeaders.php:81-85` memblokir `https://unpkg.com/.../marker-icon.png`.)
 3. 🟡 **Warning "multiple instances of Alpine" di semua halaman** — Alpine di-bootstrap di `resources/js/app.js` (`.start()`) dan tampaknya dimuat pula oleh bundel Flux → 2 instance. Dampak minor (duplikasi inisialisasi), tapi perlu dirapikan.
 
 Tidak ada request network yang gagal di semua halaman yang ditelusuri (semua 200/302/403 sesuai konteks).
@@ -214,7 +214,7 @@ Tidak ada request network yang gagal di semua halaman yang ditelusuri (semua 200
 | **P0-1** | Pindahkan/hapus file legacy dari `public/storage/badig` (PDF laporan, foto DPO, attachment) | HIGH-1 (live: `200` tanpa login) | **Bocor data intel & DPO**; otorisasi dilewati; nama file mudah ditebak |
 | **P0-2** | Perbaiki email/OTP produksi | Log prod (SMTP 465/587 + `proc_open` disabled) | OTP/notifikasi tidak terkirim → auth lemah |
 | **P0-3** | Amankan `.envv` (hapus/pindah ke `.env`, tambah ke `.gitignore`) | HIGH-2 | Kebocoran kredensial DB produksi bila repo di-push |
-| **P1-1** | CSP: tambah `unpkg.com` ke `img-src` atau self-host Leaflet | Runtime (marker peta tak tampil) | Fitur lokasi tidak berguna |
+| **P1-1** | ~~CSP: tambah `unpkg.com` ke `img-src` atau self-host Leaflet~~ **SELESAI** — marker kini pin SVG inline (`badigMapPinIcon`) | Runtime (marker peta tak tampil) | Fitur lokasi tidak berguna |
 | **P1-2** | Fix SyntaxError Alpine `dashboard/index.blade.php:102` | Runtime (error console ×8) | Indikator filter aktif mati |
 | **P1-3** | Pindahkan `syncReportPdf` & backup dump ke queue; tanda status ke user | MED-1, MED-8 | Create/backup lambat/timeout; error PDF senyap |
 | **P1-4** | Batasi payload dashboard (agregasi/cluster + cache `count`) | MED-2, NIT-2 | TTFB & HTML membengkak seiring data |

@@ -36,6 +36,25 @@ window.BADIGTheme = {
     toggle: () => applyTheme(resolveTheme() === 'dark' ? 'light' : 'dark', true),
 };
 
+// Pin peta bergaya Google Maps sebagai SVG inline. Leaflet secara default
+// mengambil marker-icon.png dari CDN yang diblokir CSP (img-src), sehingga
+// marker tidak tampil. Dengan SVG inline penanda selalu muncul tanpa aset luar.
+window.badigMapPinIcon = function (size = 40) {
+    const html = '<div style="width:' + size + 'px;height:' + size + 'px;line-height:0;filter:drop-shadow(0 3px 3px rgba(0,0,0,.35));">'
+        + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="' + size + '" height="' + size + '" aria-hidden="true">'
+        + '<path fill="#EA4335" stroke="#ffffff" stroke-width="1.2" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>'
+        + '<circle cx="12" cy="9" r="2.6" fill="#ffffff"/>'
+        + '</svg></div>';
+
+    return {
+        className: 'badig-map-pin',
+        html,
+        iconSize: [size, size],
+        iconAnchor: [size / 2, size],
+        popupAnchor: [0, -size],
+    };
+};
+
 Alpine.data('dashboardShell', () => ({
     mobileOpen: false,
     sidebarMini: false,

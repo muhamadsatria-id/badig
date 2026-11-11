@@ -526,7 +526,7 @@
                                 </div>
                             </article>`;
 
-                        L.marker([lat, lng]).addTo(map).bindPopup(popup);
+                        L.marker([lat, lng], { icon: L.divIcon(window.badigMapPinIcon()) }).addTo(map).bindPopup(popup);
                         bounds.push([lat, lng]);
                     });
 
