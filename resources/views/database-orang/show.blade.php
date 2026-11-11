@@ -83,7 +83,7 @@ $sections = [
             @forelse($attachments as $attachment)
                 <article class="overflow-hidden rounded-xl border border-line bg-surface-raised">
                     @if($attachment->is_image)
-                        <img src="{{ route('database-orang.attachments.preview', [$orang, $attachment->id]) }}" class="h-40 w-full object-cover" alt="{{ $attachment->original_name }}">
+                        <img src="{{ route('database-orang.attachments.preview', [$orang, $attachment->id]) }}" loading="lazy" decoding="async" class="h-40 w-full object-cover" alt="{{ $attachment->original_name }}">
                     @else
                         <div class="flex h-28 items-center justify-center bg-surface"><flux:icon name="document" class="size-9 text-muted" /></div>
                     @endif

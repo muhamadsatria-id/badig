@@ -37,7 +37,13 @@ class AppServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('downloads', function (Request $request): Limit {
-            return Limit::perMinute(30)->by('download:'.($request->user()?->id ?: $request->ip()));
+            return Limit::perMinute(60)->by('download:'.($request->user()?->id ?: $request->ip()));
+        });
+
+        // Media inline (foto profil, pratinjau lampiran) dimuat berkali-kali per
+        // halaman/daftar, jadi kuotanya dipisah dari unduhan berkas sebenarnya.
+        RateLimiter::for('media', function (Request $request): Limit {
+            return Limit::perMinute(300)->by('media:'.($request->user()?->id ?: $request->ip()));
         });
 
         RateLimiter::for('heavy-export', function (Request $request): Limit {

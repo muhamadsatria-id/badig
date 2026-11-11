@@ -37,7 +37,7 @@ Route::middleware(['auth', 'session.fresh', 'role.unit.valid'])->group(function 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::get('/profile/photo', [ProfileController::class, 'photo'])
-        ->middleware('throttle:downloads')
+        ->middleware('throttle:media')
         ->name('profile.photo');
     Route::patch('/profile', [ProfileController::class, 'update'])
         ->middleware('throttle:sensitive-write')
@@ -50,7 +50,7 @@ Route::middleware(['auth', 'session.fresh', 'role.unit.valid'])->group(function 
         Route::post('/data/{unit}/export-selected-pdf', [IntelUnitController::class, 'exportSelectedPdf'])->middleware('throttle:heavy-export')->name('units.export-selected-pdf');
         Route::get('/data/{unit}/report-pdf', [IntelUnitController::class, 'reportPdf'])->middleware('throttle:heavy-export')->name('units.report-pdf');
         Route::get('/data/{unit}/file-manager', [IntelUnitController::class, 'fileManager'])->name('units.file-manager');
-        Route::get('/data/{unit}/attachments/{attachment}/preview', [IntelUnitController::class, 'previewAttachment'])->middleware('throttle:downloads')->name('units.attachments.preview');
+        Route::get('/data/{unit}/attachments/{attachment}/preview', [IntelUnitController::class, 'previewAttachment'])->middleware('throttle:media')->name('units.attachments.preview');
         Route::get('/data/{unit}/attachments/{attachment}/download', [IntelUnitController::class, 'downloadAttachment'])->middleware('throttle:downloads')->name('units.attachments.download');
         Route::delete('/data/{unit}/attachments/{attachment}', [IntelUnitController::class, 'deleteAttachment'])->middleware('throttle:sensitive-write')->name('units.attachments.delete');
         Route::get('/data/{unit}/{id}/document', [UnitDocumentController::class, 'html'])->name('units.document');
@@ -65,8 +65,8 @@ Route::middleware(['auth', 'session.fresh', 'role.unit.valid'])->group(function 
         Route::get('/database-orang/export-pdf', [DatabaseOrangController::class, 'exportPdf'])->middleware('throttle:heavy-export')->name('database-orang.export-pdf');
         Route::post('/database-orang/import', [DatabaseOrangController::class, 'import'])->middleware('throttle:imports')->name('database-orang.import');
         Route::get('/database-orang/{database_orang}/pdf', [DatabaseOrangController::class, 'pdf'])->middleware('throttle:heavy-export')->name('database-orang.pdf');
-        Route::get('/database-orang/{database_orang}/photo', [DatabaseOrangController::class, 'photo'])->middleware('throttle:downloads')->name('database-orang.photo');
-        Route::get('/database-orang/{database_orang}/attachments/{attachment}/preview', [DatabaseOrangController::class, 'previewAttachment'])->middleware('throttle:downloads')->name('database-orang.attachments.preview');
+        Route::get('/database-orang/{database_orang}/photo', [DatabaseOrangController::class, 'photo'])->middleware('throttle:media')->name('database-orang.photo');
+        Route::get('/database-orang/{database_orang}/attachments/{attachment}/preview', [DatabaseOrangController::class, 'previewAttachment'])->middleware('throttle:media')->name('database-orang.attachments.preview');
         Route::get('/database-orang/{database_orang}/attachments/{attachment}/download', [DatabaseOrangController::class, 'downloadAttachment'])->middleware('throttle:downloads')->name('database-orang.attachments.download');
         Route::delete('/database-orang/{database_orang}/attachments/{attachment}', [DatabaseOrangController::class, 'deleteAttachment'])->middleware('throttle:sensitive-write')->name('database-orang.attachments.delete');
         Route::get('/database-orang', [DatabaseOrangController::class, 'index'])->name('database-orang.index');
@@ -85,7 +85,7 @@ Route::middleware(['auth', 'session.fresh', 'role.unit.valid'])->group(function 
             Route::get('/file-manager', [PimpinanFileManagerController::class, 'index'])->name('file-manager');
             Route::get('/file-manager/export/{type}', [PimpinanFileManagerController::class, 'export'])->whereIn('type', ['pdf'])->middleware('throttle:heavy-export')->name('file-manager.export');
             Route::get('/file-manager/attachments/{attachment}/download', [PimpinanFileManagerController::class, 'downloadAttachment'])->middleware('throttle:downloads')->name('file-manager.attachments.download');
-            Route::get('/file-manager/attachments/{attachment}/preview', [PimpinanFileManagerController::class, 'previewAttachment'])->middleware('throttle:downloads')->name('file-manager.attachments.preview');
+            Route::get('/file-manager/attachments/{attachment}/preview', [PimpinanFileManagerController::class, 'previewAttachment'])->middleware('throttle:media')->name('file-manager.attachments.preview');
             Route::delete('/file-manager/attachments/{attachment}', [PimpinanFileManagerController::class, 'deleteAttachment'])->middleware('throttle:sensitive-write')->name('file-manager.attachments.delete');
         });
 

@@ -60,7 +60,7 @@
                                 <div class="flex items-center gap-3">
                                     <div class="size-12 shrink-0 overflow-hidden rounded-lg border border-line bg-surface-raised">
                                         @if($orang->foto)
-                                            <img src="{{ route('database-orang.photo', $orang) }}" class="h-full w-full object-cover" alt="{{ $orang->nama }}">
+                                            <img src="{{ route('database-orang.photo', $orang) }}" loading="lazy" decoding="async" class="h-full w-full object-cover" alt="{{ $orang->nama }}">
                                         @else
                                             <div class="flex h-full w-full items-center justify-center text-muted"><flux:icon name="user" class="size-5" /></div>
                                         @endif

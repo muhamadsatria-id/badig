@@ -32,7 +32,7 @@ class IntelUnitController extends Controller
     private array $modules = [
         'unit1' => [
             'id' => 1,
-            'code' => 'IP',
+            'code' => 'IDPOL',
             'title' => 'Ideologi Politik',
             'model' => Unit1Ideology::class,
             'table' => 'unit1_ideology',
@@ -41,6 +41,7 @@ class IntelUnitController extends Controller
         ],
         'unit2' => [
             'id' => 2,
+            'code' => 'EKON',
             'title' => 'Ekonomi',
             'model' => Unit2Economy::class,
             'table' => 'unit2_economy',
@@ -49,6 +50,7 @@ class IntelUnitController extends Controller
         ],
         'unit3' => [
             'id' => 3,
+            'code' => 'SOSBUD',
             'title' => 'Sosial Budaya',
             'model' => Unit3Sosbud::class,
             'table' => 'unit3_sosbud',
@@ -57,6 +59,7 @@ class IntelUnitController extends Controller
         ],
         'unit4' => [
             'id' => 4,
+            'code' => 'KAMNEG',
             'title' => 'Keamanan Negara',
             'model' => Unit4Security::class,
             'table' => 'unit4_security_crim',
@@ -81,6 +84,7 @@ class IntelUnitController extends Controller
                 $unitRow = Unit::find($module['id']);
                 if ($unitRow) {
                     $module['title'] = $unitRow->nama_unit;
+                    $module['code'] = $unitRow->kode ?: $module['code'];
                 }
             }
         } catch (\Throwable $e) {

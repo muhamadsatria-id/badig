@@ -35,7 +35,7 @@ Tests use SQLite `:memory:` with array cache/session (see `phpunit.xml`). Only 4
 - **Tailwind v4** via `@tailwindcss/vite`; design tokens/semantic colors are CSS vars in `resources/css/app.css` (mapped in `tailwind.config.js`). Dark theme is the default (`.dark`, `localStorage('theme')`, pre-paint script).
 - **Shared-hosting shim**: root `index.php` + `.htaccess` rewrite to `public/` and pin PHP 8.4 (cPanel). Deploy target is cPanel; DB backup is a pure-PHP SQL dump (no `mysqldump`).
 - **`backups/` at repo root = code snapshots**, not DB backups. App-generated DB backups go to `storage/app/private/backups/`.
-- Rate limiter names (defined in `AppServiceProvider`): `login`, `sensitive-write`, `downloads`, `heavy-export`, `imports`, `backup`. Use them on new write/export routes.
+- Rate limiter names (defined in `AppServiceProvider`): `login`, `sensitive-write`, `downloads` (unduhan berkas nyata, 60/menit), `media` (foto/pratinjau inline, 300/menit), `heavy-export`, `imports`, `backup`. Use them on new write/export routes. Jangan pakai `downloads` untuk media inline — gambar dimuat berkali-kali per halaman sehingga kuota unduhan cepat habis (429).
 
 ## Known issues / landmines (see `report.md` §7)
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dokumen {{ $module['title'] }} #{{ $item->id }}</title>
+    <title>Dokumen {{ $module['title'] }} {{ $module['code'] ?? '-' }}/{{ $item->id }}</title>
     <style>
         body {
             font-family: Helvetica, Arial, sans-serif;
@@ -271,7 +271,7 @@
             </div>
             <div class="kop-text-cell">
                 <h1>BASIS DATA TERINTEGRASI SAT INTELKAM</h1>
-                <div class="sub-header">DOKUMEN REKAM DATA INTERNAL &bull; CLUSTER {{ strtoupper($module['title']) }} &bull; REKORD #{{ strtoupper($item->id) }}</div>
+                <div class="sub-header">DOKUMEN REKAM DATA INTERNAL &bull; CLUSTER {{ strtoupper($module['title']) }} &bull; REKORD {{ strtoupper($module['code'] ?? '-') }}/{{ $item->id }}</div>
             </div>
         </div>
     </div>

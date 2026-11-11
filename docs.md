@@ -396,7 +396,7 @@ Kemampuan:
 - **File Manager unit** (`/data/{unit}/file-manager`) — daftar lampiran, filter, preview/download/hapus.
 - **Ekspor** — PDF terpilih (maks 100 record) & rekap landscape (maks 500 baris).
 - **Hapus** — record dihapus (lampiran fisik & DB ikut ditangani), diaudit `DELETE_unitN`.
-- Semua operasi sensitif memakai throttle (`sensitive-write`, `heavy-export`, `downloads`).
+- Semua operasi sensitif memakai throttle (`sensitive-write`, `heavy-export`, `downloads` untuk unduhan berkas, `media` untuk foto/pratinjau inline).
 
 ### 7.4 Database Orang / DPO (`/database-orang`)
 
@@ -620,7 +620,7 @@ Semua di `routes/web.php`. Health check: `GET /up` (registrasi di `bootstrap/app
 | Tabel | Fungsi | Kolom penting |
 |---|---|---|
 | `users` | Pengguna | name, email (unique), password, **role_id**, **unit_id**, nrp, phone, address, photo, **is_locked**, login_attempts, **otp_code** (64 — HMAC), otp_expires_at, deleted_at (soft delete) |
-| `units` | 4 unit tetap | id (tiny), nama_unit, kode, kode_unit, slug, deskripsi, is_active — di-seed: 1 IP, 2 EKO, 3 SOSBUD, 4 KAMNEG |
+| `units` | 4 unit tetap | id (tiny), nama_unit, kode, kode_unit, slug, deskripsi, is_active — di-seed: 1 IDPOL, 2 EKON, 3 SOSBUD, 4 KAMNEG. Kode unit dipakai sebagai prefix nomor rekam dokumen (mis. `IDPOL/2`) di `documents.unit` & `units.pdf_cetak`. |
 | `districts` / `villages` | Wilayah | name; villages: district_id FK cascade, unique(district_id, name) |
 | `unit1_ideology` … `unit4_security_crim` | Data per unit | district_id, village_id, koordinat_lat/lng (11,8), status_laporan, catatan_validasi, operator_id, tanggal_pembuatan, pelapor_nama, pelapor_nrp + kolom khusus unit |
 | `database_orang` | DPO master | unit_id, nama, nik, nrp, foto, kategori, status_dpo, ±35 kolom identitas/fisik/hukum/dokumen, created_by |

@@ -190,14 +190,14 @@
     <!-- JUDUL REKAM DATA -->
     <div class="title-section">
         <div class="doc-title">DOKUMEN REKAM DATA INTERNAL</div>
-        <div class="doc-number">{{ strtoupper($module['title']) }} · Nomor Rekam #{{ $item->id }}</div>
+        <div class="doc-number">{{ strtoupper($module['title']) }} · Nomor Rekam {{ $module['code'] ?? '-' }}/{{ $item->id }}</div>
     </div>
 
     <!-- HERO / RINGKASAN DATA (BORDER KOTAK LUAR SAJA) -->
     <table class="top-box">
         <tr>
             <td>
-                <div class="hero-title">{{ $item->{$module['main']} ?: 'Rekam Data #'.$item->id }}</div>
+                <div class="hero-title">{{ $item->{$module['main']} ?: 'Rekam Data '.($module['code'] ?? '-').'/'.$item->id }}</div>
                 <table class="info-table">
                     <tr>
                         <td class="col-label">Kategori</td>

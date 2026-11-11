@@ -65,15 +65,15 @@ return new class extends Migration
         $defaults = [
             1 => [
                 'nama_unit' => 'Ideologi Politik',
-                'kode' => 'IP',
-                'kode_unit' => 'IP',
+                'kode' => 'IDPOL',
+                'kode_unit' => 'IDPOL',
                 'slug' => 'unit1',
                 'deskripsi' => 'Unit bidang ideologi dan politik.',
             ],
             2 => [
                 'nama_unit' => 'Ekonomi',
-                'kode' => 'EKO',
-                'kode_unit' => 'EKO',
+                'kode' => 'EKON',
+                'kode_unit' => 'EKON',
                 'slug' => 'unit2',
                 'deskripsi' => 'Unit bidang ekonomi dan objek vital ekonomi.',
             ],

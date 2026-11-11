@@ -89,7 +89,7 @@
                                     <td class="px-3 py-2.5">
                                         @if($attachment->is_image)
                                             <div class="h-10 w-10 overflow-hidden rounded-lg border border-line bg-surface-raised">
-                                                <img src="{{ route('units.attachments.preview', [$unit, $attachment->id]) }}" alt="{{ $attachment->original_name }}" class="h-full w-full object-cover">
+                                                <img src="{{ route('units.attachments.preview', [$unit, $attachment->id]) }}" alt="{{ $attachment->original_name }}" loading="lazy" decoding="async" class="h-full w-full object-cover">
                                             </div>
                                         @else
                                             <span class="inline-flex items-center justify-center rounded-lg border border-line bg-surface-raised px-2 py-1 font-mono text-[10px] font-bold uppercase text-accent">
