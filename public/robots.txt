@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /data/
+Disallow: /database-orang
+Disallow: /admin-it/
+Disallow: /super-admin/
+Disallow: /pimpinan/
+Disallow: /profile
+
+Sitemap: https://badig.sardev.biz.id/sitemap.xml
